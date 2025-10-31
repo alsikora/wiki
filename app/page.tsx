@@ -1,64 +1,37 @@
-import Image from "next/image";
+import { WikiCard } from "@/components/ui/wiki-card";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div>
+      <main className="max-w-2xl mx-auto mt-10 flex flex-col gap-6">
+        <WikiCard
+          title="Complete Intro to MCP"
+          author="Brian Holt"
+          date="Sep 2025"
+          summary="Dive into the Model Context Protocol and code an MCP server from scratch! Leverage external APIs and interact with custom applications. Compare remote versus local implementation strategies and security best practices to ensure safe AI agent deployment."
+          href="/wiki/1"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        <WikiCard
+          title="Rust for TypeScript Developers"
+          author="ThePrimeagen"
+          date="Sep 2025"
+          summary="ThePrimeagen teaches Rust to JavaScript/TypeScript devs. Dive into Rust's memory safety, ownership, and concurrency with fun, practical examples."
+          href="/wiki/2"
+        />
+        <WikiCard
+          title="API Design & Node.js"
+          author="Scott Moss"
+          date="Sep 2025"
+          summary="Scott Moss covers building robust APIs with Node.js. Learn REST, authentication, testing, and best practices for scalable backend services."
+          href="/wiki/3"
+        />
+        <WikiCard
+          title="Cursor & Claude Code"
+          author="Steve Kinney"
+          date="Sep 2025"
+          summary="Use Cursor and Claude Code for precise inline edits or to delegate larger tasks to background agents. Build project plans with guardrails, rules, and linting to keep output on track. Follow real-world workflows from a professional developer to harness AI agents for faster, higher-quality code!"
+          href="/wiki/4"
+        />
       </main>
     </div>
   );
