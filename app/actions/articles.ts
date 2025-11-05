@@ -6,6 +6,7 @@ import { authorizeUserToEditArticle } from "@/db/authz";
 import db from "@/db/index";
 import { articles } from "@/db/schema";
 import { stackServerApp } from "@/stack/server";
+import redis from '@/app/cache';
 
 // Server actions for articles (stubs)
 // TODO: Replace with real database operations when ready
@@ -43,6 +44,7 @@ export async function createArticle(data: CreateArticleInput) {
     .returning({id: articles.id});
 
   const articleId = response[0]?.id;
+  await redis.del("articles:all");
   return {success: true, message: "Article create logged", id: articleId};
 }
 
