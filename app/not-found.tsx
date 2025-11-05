@@ -10,8 +10,8 @@ export default function NotFound() {
         <CardContent className="pt-8 pb-8">
           {/* Icon illustration */}
           <div className="relative mb-6">
-            <Search className="h-16 w-16 mx-auto text-muted-foreground" />
-            <X className="h-8 w-8 absolute -top-1 -right-1 text-destructive" />
+            <Search className="h-16 w-16 mx-auto text-muted-foreground"/>
+            <X className="h-8 w-8 absolute -top-1 -right-1 text-destructive"/>
           </div>
 
           {/* Main heading */}
@@ -24,14 +24,14 @@ export default function NotFound() {
 
           {/* Friendly explanation */}
           <p className="text-muted-foreground mb-8 leading-relaxed">
-            The wiki page you're looking for doesn't exist. It might have been
+            The wiki page you&#39;re looking for doesn&#39;t exist. It might have been
             moved, deleted, or you entered the wrong URL.
           </p>
 
           {/* Call-to-action button */}
           <Link href="/">
             <Button className="w-full" size="lg">
-              <Home className="h-4 w-4 mr-2" />
+              <Home className="h-4 w-4 mr-2"/>
               Back to Wiki Home
             </Button>
           </Link>
