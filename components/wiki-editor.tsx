@@ -2,8 +2,11 @@
 
 import MDEditor from "@uiw/react-md-editor";
 import { Upload, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
+import { createArticle, updateArticle } from "@/app/actions/articles";
+import { uploadFile } from "@/app/actions/upload";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,12 +17,7 @@ interface WikiEditorProps {
   initialContent?: string;
   isEditing?: boolean;
   articleId?: string;
-}
-
-interface FormData {
-  title: string;
-  content: string;
-  files: File[];
+  userId?: string;
 }
 
 interface FormErrors {
@@ -32,12 +30,14 @@ export default function WikiEditor({
   initialContent = "",
   isEditing = false,
   articleId,
+  userId = "user-1",
 }: WikiEditorProps) {
   const [title, setTitle] = useState(initialTitle);
   const [content, setContent] = useState(initialContent);
   const [files, setFiles] = useState<File[]>([]);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   // Validate form
   const validateForm = (): boolean => {
@@ -69,40 +69,53 @@ export default function WikiEditor({
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Handle form submission
+  // Handle form submission using Server Actions
+  // We import server actions and call them from the client component.
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
 
-    const formData: FormData = {
-      title: title.trim(),
-      content: content.trim(),
-      files,
-    };
+    try {
+      let imageUrl: string | undefined;
 
-    // Log the form data (as requested - no actual API calls)
-    console.log("Form submitted:", {
-      action: isEditing ? "edit" : "create",
-      articleId: isEditing ? articleId : undefined,
-      data: formData,
-    });
+      // If there's at least one file, upload the first one via server action
+      if (files.length > 0) {
+        const fd = new FormData();
+        fd.append("files", files[0]);
+        // uploadFile is a server action imported below
+        const uploaded = await uploadFile(fd);
+        imageUrl = uploaded?.url;
+      }
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+      const payload = {
+        title: title.trim(),
+        content: content.trim(),
+        imageUrl,
+        authorId: userId,
+      };
 
-    setIsSubmitting(false);
-
-    // In a real app, you would navigate after successful submission
-    alert(
-      `Article ${
-        isEditing ? "updated" : "created"
-      } successfully! Check console for form data.`,
-    );
+      if (isEditing && articleId) {
+        await updateArticle(articleId, payload);
+        // Redirect to article page after successful update
+        router.push(`/wiki/${articleId}`);
+      } else {
+        const result = await createArticle(payload);
+        // Redirect to article page after successful create
+        if (result.id) {
+          router.push(`/wiki/${result.id}`);
+        } else {
+          router.push("/");
+        }
+      }
+    } catch (err) {
+      console.error("Error submitting article:", err);
+      alert("Failed to submit article");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Handle cancel
@@ -141,6 +154,7 @@ export default function WikiEditor({
               <Label htmlFor="title">Title *</Label>
               <Input
                 id="title"
+                name="title"
                 type="text"
                 placeholder="Enter article title..."
                 value={title}
@@ -174,8 +188,15 @@ export default function WikiEditor({
                   hideToolbar={false}
                   visibleDragbar={false}
                   textareaProps={{
+                    name: "content",
                     placeholder: "Write your article content in Markdown...",
-                    style: { fontSize: 14, lineHeight: 1.5 },
+                    style: {fontSize: 14, lineHeight: 1.5},
+                    // make these explicit so SSR and client output match exactly
+                    // server-rendered HTML used autoCapitalize="none" — keep that value
+                    autoCapitalize: "none",
+                    autoComplete: "off",
+                    autoCorrect: "off",
+                    spellCheck: false,
                   }}
                 />
               </div>
@@ -194,7 +215,7 @@ export default function WikiEditor({
           <CardContent>
             <div className="space-y-4">
               <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
-                <Upload className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
+                <Upload className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4"/>
                 <div className="space-y-2">
                   <Label
                     htmlFor="file-upload"
@@ -242,7 +263,7 @@ export default function WikiEditor({
                           onClick={() => removeFile(index)}
                           className="h-8 w-8 p-0"
                         >
-                          <X className="h-4 w-4" />
+                          <X className="h-4 w-4"/>
                         </Button>
                       </div>
                     ))}
@@ -262,13 +283,14 @@ export default function WikiEditor({
                 variant="outline"
                 onClick={handleCancel}
                 disabled={isSubmitting}
+                className="cursor-pointer"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="min-w-[100px]"
+                className="min-w-[100px] cursor-pointer"
               >
                 {isSubmitting ? "Saving..." : "Save Article"}
               </Button>
