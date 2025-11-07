@@ -1,6 +1,6 @@
 "use server";
 
-import redis from '@/app/cache';
+import redis from '@/cache';
 import sendCelebrationEmail from '@/email/celebration-email';
 
 const milestones = [10, 50, 100, 1000, 10000];

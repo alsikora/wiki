@@ -2,10 +2,20 @@ import { eq } from "drizzle-orm";
 import { usersSync } from "drizzle-orm/neon";
 import db from "@/db/index";
 import { articles } from "@/db/schema";
-import redis from '@/app/cache';
+import redis from '@/cache';
 
-export async function getArticles() {
-  const cached = await redis.get("articles:all");
+export type ArticleList = {
+  id: number;
+  title: string;
+  createdAt: string;
+  summary?: string | null;
+  content: string;
+  author: string | null;
+  imageUrl?: string | null;
+};
+
+export async function getArticles(): Promise<ArticleList[]> {
+  const cached = await redis.get<ArticleList[]>("articles:all");
   if (cached) {
     console.log("🎯 Get Articles Cache Hit!");
     return cached;
@@ -19,6 +29,7 @@ export async function getArticles() {
       content: articles.content,
       author: usersSync.name,
       imageUrl: articles.imageUrl,
+      summary: articles.summary,
     })
     .from(articles)
     .leftJoin(usersSync, eq(articles.authorId, usersSync.id));

@@ -1,18 +1,11 @@
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from "@/components/ui/card";
 
 interface WikiCardProps {
   title: string;
   author: string;
   date: string;
-  summary: string;
+  summary?: string | null;
   href: string;
 }
 
